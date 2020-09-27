@@ -61,9 +61,8 @@ private extension WeatherFetcher {
     
     components.queryItems = [
       URLQueryItem(name: "q", value: city),
-      URLQueryItem(name: "mode", value: "json"),
       URLQueryItem(name: "units", value: "metric"),
-      URLQueryItem(name: "APPID", value: OpenWeatherAPI.key)
+      URLQueryItem(name: "appid", value: OpenWeatherAPI.key)
     ]
     
     return components
@@ -79,9 +78,8 @@ private extension WeatherFetcher {
     
     components.queryItems = [
       URLQueryItem(name: "q", value: city),
-      URLQueryItem(name: "mode", value: "json"),
       URLQueryItem(name: "units", value: "metric"),
-      URLQueryItem(name: "APPID", value: OpenWeatherAPI.key)
+      URLQueryItem(name: "appid", value: OpenWeatherAPI.key)
     ]
     
     return components

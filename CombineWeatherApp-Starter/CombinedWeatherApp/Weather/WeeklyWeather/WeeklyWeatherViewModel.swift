@@ -26,7 +26,7 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import Foundation
+import SwiftUI
 import Combine
 
 class WeeklyWeatherViewModel: ObservableObject, Identifiable {
@@ -49,7 +49,7 @@ class WeeklyWeatherViewModel: ObservableObject, Identifiable {
       .sink(receiveValue: fetchWeather(forCity:))
   }
   
-  func fetchWeather(forCity city: String) {
+  private func fetchWeather(forCity city: String) {
     weatherFetcher.weeklyWeatherForecast(forCity: city)
       .map { response in
         response.list.map(DailyWeatherRowViewModel.init)
@@ -70,5 +70,14 @@ class WeeklyWeatherViewModel: ObservableObject, Identifiable {
         self.dataSource = forecast
       })
       .store(in: &disposables)
+  }
+}
+
+extension WeeklyWeatherViewModel {
+  var currentWeatherView: some View {
+    return WeeklyWeatherBuilder.makeCurrentWeatherView(
+      withCity: city,
+      weatherFetcher: weatherFetcher
+    )
   }
 }
