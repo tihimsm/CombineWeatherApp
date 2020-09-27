@@ -58,6 +58,17 @@ struct DailyWeatherRowViewModel: Identifiable {
     return description
   }
   
+  var emoji: String {
+    switch item.weather[0].main {
+    case .clear:
+      return "☀️"
+    case .clouds:
+      return "🌥"
+    case .rain:
+      return "☔️"
+    }
+  }
+  
   init(item: WeeklyForecastResponse.Item) {
     self.item = item
   }

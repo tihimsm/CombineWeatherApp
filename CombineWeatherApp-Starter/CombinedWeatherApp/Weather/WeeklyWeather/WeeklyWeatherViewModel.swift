@@ -29,45 +29,49 @@
 import SwiftUI
 import Combine
 
-class WeeklyWeatherViewModel: ObservableObject, Identifiable {
+class WeeklyWeatherViewModel: ObservableObject {
   @Published var city: String = ""
+  @Published var todaysWeatherEmoji: String = ""
   
-  @Published var dataSource: [DailyWeatherRowViewModel] = []
+  @Published private(set) var dataSource: [DailyWeatherRowViewModel] = []
   
   private let weatherFetcher: WeatherFetchable
   
-  private var disposables = Set<AnyCancellable>()
+  private var disposables = [AnyCancellable]()
   
   init(weatherFetcher: WeatherFetchable,
        scheduler: DispatchQueue = DispatchQueue(label: "WeatherViewModel")
   ) {
     self.weatherFetcher = weatherFetcher
     
-    _ = $city
-      .dropFirst(1)
+    let _fetchWeather = PassthroughSubject<String, Never>()
+    $city
+      .filter { !$0.isEmpty }
       .debounce(for: .seconds(0.5), scheduler: scheduler)
-      .sink(receiveValue: fetchWeather(forCity:))
-  }
-  
-  private func fetchWeather(forCity city: String) {
-    weatherFetcher.weeklyWeatherForecast(forCity: city)
-      .map { response in
-        response.list.map(DailyWeatherRowViewModel.init)
+      .sink(receiveValue: { _fetchWeather.send($0)} )
+      .store(in: &disposables)
+    
+    _fetchWeather
+      .map { city -> AnyPublisher<Result<[DailyWeatherRowViewModel], WeatherError>, Never> in
+        weatherFetcher.weeklyWeatherForecast(forCity: city)
+          .prefix(1)
+          .map { Result.success(Array.removeDuplicates($0.list.map(DailyWeatherRowViewModel.init))) }
+          .catch { Just(Result.failure($0)) }
+          .eraseToAnyPublisher()
       }
-      .map(Array.removeDuplicates)
+      .switchToLatest()
       .receive(on: DispatchQueue.main)
-      .sink(receiveCompletion: { [weak self] value in
-        guard let self = self else { return }
-        switch value {
-        case .failure:
-          self.dataSource = []
-        case .finished:
-          break
-        }
-      }, receiveValue: { [weak self] forecast in
+      .sink(receiveValue: { [weak self] result in
         guard let self = self else { return }
         
-        self.dataSource = forecast
+        switch result {
+        case let .success(forecast):
+          self.dataSource = forecast
+          self.todaysWeatherEmoji = forecast.first?.emoji ?? ""
+        case .failure:
+          self.dataSource = []
+          self.todaysWeatherEmoji = ""
+        }
       })
       .store(in: &disposables)
   }

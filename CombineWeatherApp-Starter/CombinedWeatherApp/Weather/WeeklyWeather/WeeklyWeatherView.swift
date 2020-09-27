@@ -48,7 +48,7 @@ struct WeeklyWeatherView: View {
         }
       }
       .listStyle(GroupedListStyle())
-      .navigationBarTitle("Weather ⛅️")
+      .navigationBarTitle("Weather \(self.viewModel.todaysWeatherEmoji)")
     }
   }
 }

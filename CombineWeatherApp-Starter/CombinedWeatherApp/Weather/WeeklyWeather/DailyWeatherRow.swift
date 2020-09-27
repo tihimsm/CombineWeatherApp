@@ -43,7 +43,7 @@ struct DailyWeatherRow: View {
       }
       
       VStack(alignment: .leading) {
-        Text("\(viewModel.title)")
+        Text("\(viewModel.title)  \(viewModel.emoji)")
           .font(.body)
         Text("\(viewModel.fullDescription)")
           .font(.footnote)
