@@ -29,6 +29,11 @@
 import Foundation
 import Combine
 
+protocol WeatherFetchable {
+  func weeklyWeatherForecast(forCity city: String) -> AnyPublisher<WeeklyForecastResponse, WeatherError>
+  func currentWeatherForecast(forCity city: String) -> AnyPublisher<CurrentWeatherForecastResponse, WeatherError>
+}
+
 class WeatherFetcher {
   private let session: URLSession
   
@@ -80,5 +85,32 @@ private extension WeatherFetcher {
     ]
     
     return components
+  }
+}
+
+// MARK: - WeatherFetchable
+extension WeatherFetcher: WeatherFetchable {
+  func weeklyWeatherForecast(forCity city: String) -> AnyPublisher<WeeklyForecastResponse, WeatherError> {
+    return forecast(with: makeWeeklyForecastComponents(withCity: city))
+  }
+  
+  func currentWeatherForecast(forCity city: String) -> AnyPublisher<CurrentWeatherForecastResponse, WeatherError> {
+    return forecast(with: makeCurrentDayForecastComponents(withCity: city))
+  }
+  
+  private func forecast<T>(with components: URLComponents) -> AnyPublisher<T, WeatherError> where T: Decodable {
+    guard let url = components.url else {
+      let error = WeatherError.network(description: "Couldn't create URL")
+      return Fail(error: error).eraseToAnyPublisher()
+    }
+    
+    return session.dataTaskPublisher(for: URLRequest(url: url))
+      .mapError { error in
+        .network(description: error.localizedDescription)
+      }
+      .flatMap(maxPublishers: .max(1)) { pair in
+        decode(pair.data)
+      }
+      .eraseToAnyPublisher()
   }
 }

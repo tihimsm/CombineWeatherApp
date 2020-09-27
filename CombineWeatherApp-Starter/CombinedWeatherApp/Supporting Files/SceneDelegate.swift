@@ -39,7 +39,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     guard let windowScene = scene as? UIWindowScene else { return }
 
-    let weeklyView = WeeklyWeatherView()
+    let viewModel = WeeklyWeatherViewModel(weatherFetcher: WeatherFetcher())
+    let weeklyView = WeeklyWeatherView(viewModel: viewModel)
 
     // Use a UIHostingController as window root view controller
     let window = UIWindow(windowScene: windowScene)

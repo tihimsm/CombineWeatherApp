@@ -415,7 +415,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = HYJ293PKPL;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "CombinedWeatherApp/Supporting Files//Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
@@ -435,7 +435,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = HYJ293PKPL;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = "CombinedWeatherApp/Supporting Files//Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
