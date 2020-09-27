@@ -28,6 +28,7 @@
 
 import Foundation
 import Combine
+import Keys
 
 protocol WeatherFetchable {
   func weeklyWeatherForecast(forCity city: String) -> AnyPublisher<WeeklyForecastResponse, WeatherError>
@@ -36,6 +37,7 @@ protocol WeatherFetchable {
 
 class WeatherFetcher {
   private let session: URLSession
+  private let keys = CombinedWeatherAppKeys()
   
   init(session: URLSession = .shared) {
     self.session = session
@@ -48,7 +50,7 @@ private extension WeatherFetcher {
     static let scheme = "https"
     static let host = "api.openweathermap.org"
     static let path = "/data/2.5"
-    static let key = "c0318e5ac33fa56ac27e517be2a9fe25"
+    static let key = CombinedWeatherAppKeys().appId
   }
   
   func makeWeeklyForecastComponents(
