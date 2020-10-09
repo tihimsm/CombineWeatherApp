@@ -16,5 +16,5 @@ $ bundle exec pod install
 
 You will be asked "AppId" by terminal, then you will input your WeatherMap's APIKEY
 
-# open CombineWeatherApp.xcworkspace
+$ open CombineWeatherApp.xcworkspace
 ```
